@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#4A628A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EnglishChamp">
+<title>LET'S BE AN ENGLISH CHAMPION!</title>
+<!-- PWA External Manifest Link -->
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="https://unsplash.com">
+<!-- Tailwind CSS CDN -->
+<script src="https://tailwindcss.com"></script>
+<!-- Google Fonts & FontAwesome -->
+<link rel="preconnect" href="https://googleapis.com">
+<link rel="preconnect" href="https://gstatic.com" crossorigin>
+<link href="https://googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cloudflare.com">
+
+<style>
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+body{
+  font-family:'Fredoka',sans-serif;
+  background:#F3F8FF;
+  color:#1E293B;
+}
+.neo{
+  border:3px solid #1E293B;
+  box-shadow:6px 6px 0 #1E293B;
+}
+.neo-sm{
+  border:2px solid #1E293B;
+  box-shadow:4px 4px 0 #1E293B;
+}
+.neo:active{
+  transform:translate(3px,3px);
+  box-shadow:3px 3px 0 #1E293B;
+}
+.neo-sm:active{
+  transform:translate(2px,2px);
+  box-shadow:2px 2px 0 #1E293B;
+}
+button{
+  transition:transform .08s ease, box-shadow .08s ease, background-color .15s ease;
+}
+.screen{ display:none; }
+.screen.active{ display:block; }
+
+.letter-box{
+  flex: 0 1 auto;
+  width: clamp(24px, 6vw, 40px);
+  height: clamp(34px, 8vw, 48px);
+  border: 3px solid #1E293B;
+  border-radius: 12px;
+  text-align: center;
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
+  font-weight: 700;
+  background: #FFFFFF;
+  outline: none;
+  padding: 0;
+  box-shadow: 0 4px 0 0 #1E293B;
+}
+.letter-box:focus{
+  border-color:#4A628A;
+  background:#EFF6FF;
+}
+.letter-box.fixed{
+  color:#2563EB;
+  border-color:#2563EB;
+  background:#DBEAFE;
+  box-shadow:0 4px 0 0 #2563EB;
+}
+.answer-row{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:clamp(4px, 1.5vw, 8px);
+  width:100%;
+}
+.timer-track{
+  height:18px;
+  border:2px solid #1E293B;
+  border-radius:999px;
+  overflow:hidden;
+  background:#FFF;
+}
+.timer-fill{
+  height:100%;
+  width:100%;
+  background:#4ade80;
+  transition:width 1s linear, background-color .2s ease;
+}
+.certificate{
+  background:#FFFFFF;
+  border:12px double #4A628A;
+  padding:40px 24px;
+}
+@media(max-width:640px){
+  .neo{ box-shadow:4px 4px 0 #1E293B; }
+}
+</style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased" onclick="soundManager.startMusicOnce()">
+
+<header id="global-header" class="hidden sticky top-0 z-40 bg-[#4A628A] text-white border-b-4 border-[#1E293B]">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+    <button onclick="router.go('home')" class="font-bold text-lg md:text-xl tracking-wide flex items-center gap-2">
+      🏆 TZ EDU KIDS
+    </button>
+    <div class="flex items-center gap-3">
+      <span id="global-player-name" class="hidden sm:inline font-semibold text-yellow-300"></span>
+      <button id="sound-toggle" onclick="soundManager.toggle()" class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-bold text-lg border-2 border-white/20">
+        🔊
+      </button>
+      <button onclick="router.go('home')" class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-bold text-lg border-2 border-white/20">
+        🏠
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="flex-grow flex items-center justify-center">
+
+  <!-- HOME SCREEN -->
+  <section id="home-screen" class="screen active w-full max-w-4xl mx-auto px-4 py-8">
+    <div class="text-center">
+      <p class="text-2xl font-black text-amber-500 tracking-widest uppercase mb-1">BRAND: TZ EDU KIDS</p>
+      <div class="text-8xl mb-4 drop-shadow-md animate-pulse">🏆</div>
+      <h1 class="text-4xl md:text-6xl font-black text-[#4A628A] leading-tight tracking-wide uppercase">
+        Let's Be An<br>English Champion!
+      </h1>
+      <p class="text-xl font-bold text-emerald-600 mt-3 tracking-wider uppercase">
+        🔤 WORD COMPLETION
+      </p>
+      
+      <div class="mt-8 max-w-sm mx-auto space-y-4">
+        <button onclick="router.go('name')" class="neo w-full bg-emerald-400 hover:bg-emerald-300 rounded-3xl px-8 py-5 text-2xl font-bold text-white tracking-wide uppercase">
+          🚀 LET'S PLAY!
+        </button>
+        <button onclick="gameState.resetAllData()" class="neo w-full bg-rose-500 hover:bg-rose-400 text-white rounded-2xl px-8 py-4 text-xl font-bold uppercase">
+          🔄 RESET PROGRESS
+        </button>
+      </div>
+
+      <div class="mt-12 grid grid-cols-3 gap-4 max-w-xl mx-auto text-xs md:text-sm">
+        <div class="neo-sm bg-pink-100 rounded-2xl p-4 flex flex-col items-center justify-center">
+          <div class="text-3xl mb-1">👨‍👩‍👧‍👦</div>
+          <b class="text-slate-700">11 TOPICS</b>
+        </div>
+        <div class="neo-sm bg-sky-100 rounded-2xl p-4 flex flex-col items-center justify-center">
+          <div class="text-3xl mb-1">⏱️</div>
+          <b class="text-slate-700">60 SECONDS</b>
+        </div>
+        <div class="neo-sm bg-emerald-100 rounded-2xl p-4 flex flex-col items-center justify-center">
+          <div class="text-3xl mb-1">⭐</div>
+          <b class="text-slate-700">+10 POINTS</b>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NAME INPUT SCREEN -->
+  <section id="name-screen" class="screen w-full max-w-md mx-auto px-4 py-8">
+    <div class="neo bg-white rounded-3xl p-8 text-center">
+      <div class="text-6xl mb-4">👋</div>
+      <h2 class="text-2xl font-bold text-slate-800">Welcome, English Champion! 👑</h2>
+      <p class="mt-2 text-slate-500 font-medium">What's your name?</p>
+      
+      <input id="player-name-input" maxlength="20" autocomplete="off"
+        class="neo w-full mt-6 rounded-2xl px-4 py-4 text-xl text-center font-bold bg-slate-50 focus:bg-white outline-none"
+        placeholder="Type name here...">
+        
+      <button onclick="gameState.savePlayerName()" class="neo w-full mt-5 bg-[#4A628A] hover:bg-[#3b4e6e] text-white rounded-2xl px-8 py-4 text-lg font-bold tracking-wide">
+        CONTINUE 🚀
+      </button>
+      <button onclick="router.go('home')" class="mt-4 font-bold text-slate-400 hover:text-slate-600 text-sm block mx-auto underline">
+        ← BACK
+      </button>
+    </div>
+  </section>
+
+  <!-- TOPIC SELECTION SCREEN -->
+  <section id="topics-screen" class="screen w-full max-w-6xl mx-auto px-4 py-8">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl md:text-4xl font-extrabold text-[#4A628A] uppercase tracking-wide">Choose A Topic</h2>
+      <p id="topics-welcome" class="mt-2 text-slate-600 font-medium text-lg"></p>
+    </div>
+    
+    <div id="topic-grid" class="grid grid-cols-2 gap-4 max-w-3xl mx-auto">
+      <!-- Generated via JS -->
+    </div>
+  </section>
+
+  <!-- QUIZ SCREEN -->
+  <section id="view-quiz" class="screen w-full max-w-2xl mx-auto px-4 py-6">
+    <div class="neo bg-white rounded-3xl p-6 relative overflow-hidden flex flex-col">
+      
+      <div class="flex items-center justify-between gap-3 border-b-2 border-slate-100 pb-4 mb-4">
+        <div>
+          <div id="quiz-topic" class="font-black text-xl text-[#4A628A] uppercase tracking-wider"></div>
+          <span id="quiz-question-number" class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full font-bold text-xs uppercase tracking-widest mt-1 inline-block"></span>
+        </div>
+        <div class="text-right">
+          <div class="font-bold text-amber-500 flex items-center gap-1 justify-end text-lg">
+            <span>🏆</span> <span id="quiz-score">0 POINTS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-6 bg-slate-50 p-3 rounded-2xl border border-slate-100">
+        <div class="flex items-center justify-between gap-3 mb-1.5 px-1">
+          <span class="font-bold text-xs text-slate-500 uppercase tracking-widest flex items-center gap-1">
+            <i class="fa-regular fa-clock"></i> Active Timer
+          </span>
+          <span id="timer-text" class="font-bold text-slate-700 text-sm">60s</span>
+        </div>
+        <div class="timer-track">
+          <div id="timer-fill" class="timer-fill"></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 rounded-3xl p-6 text-center border border-slate-100 flex-grow flex flex-col items-center justify-center min-h-[180px]">
+        <div id="question-visual" class="text-7xl mb-3"></div>
+        <h3 id="question-description" class="text-lg md:text-xl font-bold text-slate-700 px-4 leading-relaxed"></h3>
+      </div>
+
+      <div class="my-6 text-center">
+        <div class="bg-amber-50 border-2 border-dashed border-amber-300 text-amber-800 px-6 py-2.5 rounded-2xl font-bold text-base inline-flex items-center gap-2">
+          <span>💡 HINT</span>
+          <span id="hint-text" class="text-lg bg-amber-400 text-slate-900 px-2.5 py-0.5 rounded-lg font-black uppercase">?</span>
+        </div>
+      </div>
+
+      <div id="letter-boxes" class="flex flex-wrap gap-2 justify-center items-center mb-8 w-full px-2">
+      </div>
+
+      <button id="check-answer-btn" onclick="gameState.checkLetterAnswer()"
+        class="neo w-full bg-emerald-400 text-white rounded-2xl px-8 py-4 text-xl font-extrabold tracking-wide uppercase opacity-50" disabled>
+        Check Answer ✓
+      </button>
+    </div>
+  </section>
+
+  <!-- FEEDBACK SCREEN -->
+  <section id="feedback-screen" class="screen w-full max-w-md mx-auto px-4 py-8">
+    <div id="feedback-card" class="neo rounded-3xl bg-white p-8 text-center">
+
+NEXT QUESTION 
+
+
+Topic Completed!
+0
+POINTS
+
+
+0/5
+CORRECT
+
+
+0%
+ACCURACY
+
+Play Again
+
+
+Choose Another Topic
+
+
+View Certificate
+
+
+
+🏆 MY ACHIEVEMENTS
+Real-time stats log ledger
+
+
+CHOOSE TOPIC
+
+⭐
+
+Total Stars
+0
+
+
+
+🏆
+
+Total Points
+0
+
+
+
+📚
+
+Topics Finished
+0 / 11
+
+
+Topic Ledger Records
+
+BACK
+
+
+PRINT / SAVE PDF
+
+TZ EDU KIDS
+Achievement Certificate
+Word Completion Game
+This digital credential is proudly presented to
+
+for outstanding performance completing the English module task of
+Demonstrating high capability indicators matching primary school English KSSR curriculum guidelines.
+
+Score Earned
+
+
+
+Accuracy Index
+
+
+
+Stars Secured
+
+
+Verification Log
+
+
+TZ EDU KIDS Team
+
+Authorized Issuer
+
+
+
+
+© 2026 TZ EDU KIDS. Let's Be An English Champion! KSSR Year 1-4.
+const storageKey = 'tz_edu_kids_english_champion_data_v4_fixed';
+const QUESTION_BANK = {
+FAMILY: [
+['FATHER', '👨', 'The male parent who protects and guides the family unit.'],
+['MOTHER', '👩', 'The female parent who loves and takes care of the children.'],
+['BABY', '👶', 'A very young child, newly born or in early infancy stage.'],
+['SISTER', '👧', 'A girl or woman who shares the same parents with you.'],
+['BROTHER', '👦', 'A boy or man who shares the same parents with you.']
+],
+SCHOOL: [
+['PENCIL', '✏️', 'A wooden tool used by pupils for writing or sketching layout outlines.'],
+['BOOK', '📚', 'Pages bound together filled with vocabulary reading stories.'],
+['BAG', '🎒', 'Worn on shoulders to pack school books and carry stationeries.'],
+['RULER', '📏', 'A straight-edged item used to measure length scales in centimeters.'],
+['TEACHER', '👩‍🏫', 'The professional educator leading primary students in classrooms.']
+],
+HOME: [
+['HOUSE', '🏠', 'A permanent residential building structure where families live together.'],
+['BED', '🛏️', 'A piece of furniture in the bedroom used for resting at night.'],
+['CHAIR', '🪑', 'A seat item built with legs designed for sitting down comfortably.'],
+['DOOR', '🚪', 'A movable wood panel used to enter or leave a room.'],
+['TELEVISION', '📺', 'An electronic apparatus with a screen for viewing broadcast channels.']
+],
+FOOD: [
+['APPLE', '🍎', 'A crisp round edible fruit, green or red, growing on trees.'],
+['BREAD', '🍞', 'Baked food item made of flour dough, ideal for sandwiches.'],
+['MILK', '🥛', 'A nutritious white liquid drink loaded with high calcium benefits.'],
+['RICE', '🍚', 'A popular grain dish, cooked daily in Malaysian dining rooms.'],
+['FISH', '🐟', 'An aquatic water creature full of clean healthy proteins.']
+],
+CLOTHES: [
+['SHIRT', '👕', 'A casual top garment with sleeves and neck collar layout.'],
+['DRESS', '👗', 'A one-piece outer clothing outfit worn by primary school girls.'],
+['SOCKS', '🧦', 'Worn directly over feet to stay comfortable inside protective shoes.'],
+['SHOES', '👟', 'Outer protective footwear pieces strapped on before playing outdoors.'],
+['CAP', '🧢', 'Soft casual headwear option shielding eyes against sunlight beams.']
+],
+ANIMALS: [
+['DOG', '🐶', 'A common domestic canine companion animal that barks playfully.'],
+['CAT', '🐱', 'A small furry carnivorous pet animal that states meow.'],
+['LION', '🦁', 'A dangerous wild predatory feline beast known as King of Jungle.'],
+['DUCK', '🦆', 'An aquatic swimming bird species that creates quack vocal sounds.'],
+['FROG', '🐸', 'A small tailless hopping amphibian living near marsh ponds.']
+],
+WEATHER: [
+['SUNNY', '☀️', 'Climatic condition with full bright warm daylight cloud states.'],
+['RAINY', '🌧️', 'Weather condition dropping liquid precipitation water from grey clouds.'],
+['CLOUDY', '☁️', 'Sky atmosphere crowded with thick vapor layers, hiding sun rays.'],
+['WINDY', '💨', 'Atmospheric state marked by active strong air currents moving objects.'],
+['STORM', '⛈️', 'Severe turbulent weather bringing heavy lightning flashes and loud thunders.']
+],
+PLACES: [
+['PARK', '🌳', 'Public green landscape grounds intended for children recreation events.'],
+['BEACH', '🏖️', 'A sandy coastal area extending directly along ocean wave limits.'],
+['SHOP', '🛍️', 'A small retail outlet establishment trading goods and services.'],
+['HOSPITAL', '🏥', 'A medical complex infrastructure treating sick patients back to health.'],
+['BANK', '🏦', 'A secure financial enterprise institution looking after savings accounts.']
+],
+TRANSPORT: [
+['CAR', '🚗', 'Four-wheeled private motor transport vehicle traveling highway roads.'],
+['BUS', '🚌', 'Large passenger vehicle built to carry many commuting children together.'],
+['BICYCLE', '🚲', 'Two-wheeled green transportation vehicle operated via mechanical pedal foot drives.'],
+['AEROPLANE', '✈️', 'High velocity winged passenger aircraft climbing upper cloud levels.'],
+['SHIP', '🚢', 'A large maritime vessel cargo carrier navigating deep oceans.']
+],
+VERBS: [
+['RUN', '🏃', 'Moving legs forward sequentially at high kinetic velocity speeds.'],
+['SWIM', '🏊', 'Propelling your human body forward safely through aquatic pool waters.'],
+['READ', '📖', 'Scanning eye paths across printed texts to interpret stories.'],
+['WRITE', '✍️', 'Using graphite pencils to record textual symbols onto clean notebook papers.'],
+['EAT', '🍽️', 'Consuming food products into the mouth cavity to get nutrition values.']
+],
+ADJECTIVES: [
+['RED', '🔴', 'The energetic primary color matching ripe cherry or strawberry skin scales.'],
+['BIG', '🐘', 'Describing massive physical sizes, like full-grown jungle elephants.'],
+['SMALL', '🐭', 'Describing tiny diminutive body scales, like garden field pocket mice.'],
+['HAPPY', '😀', 'Feeling joy or showing dynamic positive cheerful expressions.'],
+['COLD', '🥶', 'Marked by very low thermal levels requiring heavy thick blankets.']
+]
+};
+const TOPIC_INFO = {
+FAMILY: { name: 'FAMILY', emoji: '👨‍👩‍👧‍👦', color: 'bg-pink-100' },
+SCHOOL: { name: 'SCHOOL', emoji: '🏫', color: 'bg-blue-100' },
+HOME: { name: 'HOME', emoji: '🏠', color: 'bg-green-100' },
+FOOD: { name: 'FOOD', emoji: '🍎', color: 'bg-orange-100' },
+CLOTHES: { name: 'CLOTHES', emoji: '👕', color: 'bg-purple-100' },
+ANIMALS: { name: 'ANIMALS', emoji: '🐶', color: 'bg-yellow-100' },
+WEATHER: { name: 'WEATHER', emoji: '☀️', color: 'bg-emerald-100' },
+PLACES: { name: 'PLACES', emoji: '📍', color: 'bg-cyan-100' },
+TRANSPORT: { name: 'TRANSPORT', emoji: '🚌', color: 'bg-red-100' },
+VERBS: { name: 'VERBS', emoji: '🏃', color: 'bg-indigo-100' },
+ADJECTIVES: { name: 'ADJECTIVES', emoji: '🎨', color: 'bg-fuchsia-100' }
+};
+const soundManager = {
+enabled: true,
+audioContext: null,
+musicTimer: null,
+musicStep: 0,
+musicNotes: [261.63, 329.63, 392.00, 329.63, 293.66, 349.23, 440.00, 349.23, 261.63, 329.63, 392.00, 523.25],
+init() {
+const saved = localStorage.getItem('tz_eng_champ_sound_enabled');
+if (saved !== null) this.enabled = (saved === 'true');
+this.updateButtonUI();
+},
+getContext() {
+if (!this.audioContext) {
+const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+if (AudioContextClass) this.audioContext = new AudioContextClass();
+}
+if (this.audioContext && this.audioContext.state === 'suspended') {
+this.audioContext.resume().catch(() => {});
+}
+return this.audioContext;
+},
+toggle() {
+this.enabled = !this.enabled;
+localStorage.setItem('tz_eng_champ_sound_enabled', this.enabled);
+this.updateButtonUI();
+if (this.enabled) {
+this.startMusic();
+} else {
+this.stopMusic();
+}
+},
+updateButtonUI() {
+const b = document.getElementById('sound-toggle');
+if (b) b.textContent = this.enabled ? '🔊' : '🔇';
+},
+startMusicOnce() {
+if (this.enabled && !this.musicTimer) {
+this.startMusic();
+}
+},
+startMusic() {
+if (!this.enabled) return;
+const ctx = this.getContext();
+if (!ctx) return;
+if (this.musicTimer) return;
+this.playMusicNote();
+this.musicTimer = setInterval(() => this.playMusicNote(), 700);
+},
+stopMusic() {
+if (this.musicTimer) {
+clearInterval(this.musicTimer);
+this.musicTimer = null;
+}
+},
+playMusicNote() {
+if (!this.enabled) return;
+const ctx = this.getContext();
+if (!ctx) return;
+try {
+const freq = this.musicNotes[this.musicStep % this.musicNotes.length];
+this.musicStep++;
+const osc = ctx.createOscillator();
+const gain = ctx.createGain();
+osc.type = 'triangle';
+osc.frequency.value = freq;
+gain.gain.setValueAtTime(0.015, ctx.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+osc.connect(gain);
+gain.connect(ctx.destination);
+osc.start();
+osc.stop(ctx.currentTime + 0.5);
+} catch (e) {}
+},
+beep(freq = 440, duration = 0.1) {
+if (!this.enabled) return;
+const ctx = this.getContext();
+if (!ctx) return;
+try {
+const osc = ctx.createOscillator();
+const gain = ctx.createGain();
+osc.type = 'sine';
+osc.frequency.value = freq;
+gain.gain.setValueAtTime(0.04, ctx.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+osc.connect(gain);
+gain.connect(ctx.destination);
+osc.start();
+osc.stop(ctx.currentTime + duration);
+} catch (e) {}
+},
+correct() { this.beep(587.33, 0.1); setTimeout(() => this.beep(880, 0.2), 100); },
+wrong() { this.beep(220, 0.15); setTimeout(() => this.beep(146.83, 0.25), 120); }
+};
+const router = {
+current: 'home',
+go(screenId) {
+if (screenId !== 'view-quiz') gameState.clearTimer();
+document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+let target = document.getElementById(screenId + '-screen');
+if (!target) target = document.getElementById(screenId);
+if (target) target.classList.add('active');
+this.current = screenId;
+const shouldHideHeader = (screenId === 'home-screen' || screenId === 'home' || screenId === 'name-screen' || screenId === 'name');
+document.getElementById('global-header')?.classList.toggle('hidden', shouldHideHeader);
+if (screenId === 'topics-screen' || screenId === 'topics') gameState.renderTopics();
+if (screenId === 'score-screen' || screenId === 'score') gameState.renderAchievementsView();
+soundManager.startMusic();
+window.scrollTo(0, 0);
+}
+};
+const gameState = {
+playerName: '',
+currentTopic: '',
+currentQuestionIndex: 0,
+currentScore: 0,
+correctCount: 0,
+timerInterval: null,
+timeLeft: 60,
+isDebouncing: false,
+lastResult: { score: 0, correct: 0, percentage: 0, stars: 0, topic: '' },
+init() {
+this.loadData();
+soundManager.init();
+this.syncGlobalHeaderState();
+document.getElementById('player-name-input')?.addEventListener('keydown', e => {
+if (e.key === 'Enter') this.savePlayerName();
+});
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('./sw.js').catch(() => {});
+});
+}
+const pwaBtn = document.getElementById('pwa-install-btn');
+window.addEventListener('beforeinstallprompt', e => {
+e.preventDefault();
+let deferredPrompt = e;
+pwaBtn.classList.remove('hidden');
+pwaBtn.classList.add('inline-flex');
+pwaBtn.onclick = () => {
+deferredPrompt.prompt();
+pwaBtn.classList.add('hidden');
+};
+});
+},
+loadData() {
+try {
+const data = JSON.parse(localStorage.getItem(storageKey) || '{}');
+this.playerName = data.playerName || '';
+this.topicsHistory = data.topicsHistory || {};
+} catch (e) {
+this.topicsHistory = {};
+}
+},
+saveData() {
+localStorage.setItem(storageKey, JSON.stringify({
+playerName: this.playerName,
+topicsHistory: this.topicsHistory
+}));
+this.syncGlobalHeaderState();
+},
+syncGlobalHeaderState() {
+const lbl = document.getElementById('global-player-name');
+if (lbl) {
+lbl.textContent = this.playerName ? '👑 ' + this.playerName : '';
+lbl.classList.toggle('hidden', !this.playerName);
+}
+},
+savePlayerName() {
+const input = document.getElementById('player-name-input');
+const nameStr = (input?.value || '').trim();
+if (!nameStr) {
+alert("Please specify your name first!");
+input?.focus();
+return;
+}
+this.playerName = nameStr;
+this.saveData();
+router.go('topics');
+},
+resetAllData() {
+if (!confirm('Adakah anda pasti mahu set semula (RESET) semua markah, bintang, rekod, dan nama pemain?')) return;
+localStorage.removeItem(storageKey);
+this.playerName = '';
+this.currentTopic = '';
+this.currentQuestionIndex = 0;
+this.currentScore = 0;
+this.correctCount = 0;
+this.topicsHistory = {};
+this.clearTimer();
+const input = document.getElementById('player-name-input');
+if (input) input.value = '';
+this.syncGlobalHeaderState();
+router.go('home');
+},
+renderTopics() {
+const container = document.getElementById('topic-grid');
+if (!container) return;
+document.getElementById('topics-welcome').textContent = this.playerName
+? Welcome, ${this.playerName}! Jawab dan kumpul bintang.
+: 'Sila pilih topik untuk mula bermain:';
+container.innerHTML = '';
+Object.entries(TOPIC_INFO).forEach(([key, info]) => {
+const record = this.topicsHistory[key] || { bestScore: 0, stars: 0, completed: false };
+const card = document.createElement('button');
+card.type = 'button';
+card.className = topic-card neo bg-white rounded-3xl p-4 text-left transition-all duration-200 border-3 border-slate-800 flex flex-col justify-between min-h-[140px] relative overflow-hidden;
+card.onclick = () => this.startTopic(key);
+const starLabel = record.completed ? '⭐'.repeat(record.stars) || 'Passed' : '0 Stars';
+const statusColor = record.completed ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-400';
+const statusText = record.completed ? Best: ${record.bestScore}/50 : 'Belum Main';
+card.innerHTML = <div class="flex items-start gap-2"> <div class="text-3xl p-1.5 rounded-xl ${info.color} border-2 border-slate-800 shrink-0 shadow-sm">${info.emoji}</div> <div class="min-w-0"> <h4 class="text-base font-black tracking-wide text-slate-800 uppercase truncate">${info.name}</h4> <p class="text-[10px] font-bold text-slate-500 leading-tight mt-0.5">📋 5 Soalan • ⏱️ 60s per Soalan<br>✨ +10 Markah per Soalan</p> <div class="mt-1 text-xs">${starLabel}</div> </div> </div> <div class="w-full mt-2 flex items-center justify-between border-t border-slate-100 pt-2"> <span class="text-[9px] font-black uppercase tracking-widest ${statusColor} px-2 py-0.5 rounded-full">${statusText}</span> <span class="text-[10px] font-black text-[#4A628A] tracking-wider">MAIN <i class="fa-solid fa-chevron-right text-[8px]"></i></span> </div>;
+container.appendChild(card);
+});
+const scoreCard = document.createElement('button');
+scoreCard.type = 'button';
+scoreCard.className = topic-card neo bg-gradient-to-br from-amber-400 to-amber-300 rounded-3xl p-4 text-left transition-all duration-200 border-3 border-slate-800 flex flex-col justify-between min-h-[140px] relative overflow-hidden;
+scoreCard.onclick = () => router.go('score');
+scoreCard.innerHTML = <div class="flex items-start gap-2"> <div class="text-3xl p-1.5 rounded-xl bg-white border-2 border-slate-800 shrink-0 shadow-sm">🏆</div> <div class="min-w-0"> <h4 class="text-base font-black tracking-wide text-slate-800 uppercase">MY SCORE</h4> <p class="text-[10px] font-bold text-amber-900 leading-tight mt-0.5">Semak jumlah markah penuh & pencapaian keseluruhan bintang anda di sini!</p> </div> </div> <div class="w-full mt-2 flex items-center justify-between border-t border-amber-500/20 pt-2"> <span class="text-[9px] font-black uppercase tracking-widest bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full">Pencapaian</span> <span class="text-[10px] font-black text-slate-800 tracking-wider">LIHAT →</span> </div>;
+container.appendChild(scoreCard);
+},
+startTopic(topicKey) {
+this.currentTopic = topicKey;
+this.currentQuestionIndex = 0;
+this.currentScore = 0;
+this.correctCount = 0;
+this.isDebouncing = false;
+router.go('view-quiz');
+this.loadQuestion();
+},
+getCurrentQuestion() {
+return QUESTION_BANK[this.currentTopic][this.currentQuestionIndex];
+},
+loadQuestion() {
+this.clearTimer();
+this.isDebouncing = false;
+const q = this.getCurrentQuestion();
+if (!q) return;
+const [answer, emoji, description] = q;
+document.getElementById('quiz-topic').textContent = ${TOPIC_INFO[this.currentTopic].emoji} ${TOPIC_INFO[this.currentTopic].name};
+document.getElementById('quiz-question-number').textContent = Question ${this.currentQuestionIndex + 1} / 5;
+document.getElementById('quiz-score').textContent = ${this.currentScore} POINTS;
+document.getElementById('question-visual').textContent = emoji;
+document.getElementById('question-description').textContent = description;
+document.getElementById('hint-text').textContent = answer.charAt(0).toUpperCase();
+const boxesContainer = document.getElementById('letter-boxes');
+boxesContainer.innerHTML = '';
+const wordTokens = answer.split(' ');
+let globalCharacterIndex = 0;
+wordTokens.forEach(word => {
+const row = document.createElement('div');
+row.className = 'answer-row';
+[...word].forEach((char, wordCharIdx) => {
+const input = document.createElement('input');
+input.type = 'text';
+input.className = 'letter-box';
+input.maxLength = 1;
+input.autocomplete = 'off';
+input.dataset.globalIndex = globalCharacterIndex;
+input.dataset.answerChar = char;
+if (globalCharacterIndex === 0) {
+input.value = char.toUpperCase();
+input.disabled = true;
+input.classList.add('fixed');
+} else {
+input.addEventListener('input', e => {
+e.target.value = e.target.value.replace(/[^a-zA-Z]/g, '').toUpperCase();
+if (e.target.value) {
+const allInputs = [...boxesContainer.querySelectorAll('input:not(:disabled)')];
+const curIdx = allInputs.indexOf(e.target);
+if (curIdx >= 0 && curIdx + 1 < allInputs.length) {
+allInputs[curIdx + 1].focus();
+}
+}
+this.checkIfComplete();
+});
+input.addEventListener('keydown', e => {
+if (e.key === 'Backspace' && !e.target.value) {
+const allInputs = [...boxesContainer.querySelectorAll('input:not(:disabled)')];
+const curIdx = allInputs.indexOf(e.target);
+if (curIdx > 0) {
+allInputs[curIdx - 1].focus();
+allInputs[curIdx - 1].value = '';
+}
+}
+if (e.key === 'Enter' && !document.getElementById('check-answer-btn').disabled) {
+this.checkLetterAnswer();
+}
+});
+}
+row.appendChild(input);
+globalCharacterIndex++;
+});
+boxesContainer.appendChild(row);
+});
+const submitBtn = document.getElementById('check-answer-btn');
+submitBtn.disabled = true;
+submitBtn.classList.add('opacity-50');
+this.startTimer();
+setTimeout(() => {
+boxesContainer.querySelector('input:not(:disabled)')?.focus();
+}, 100);
+},
+checkIfComplete() {
+const inputs = [...document.querySelectorAll('#letter-boxes input:not(:disabled)')];
+const isComplete = inputs.every(i => i.value.trim().length === 1);
+const submitBtn = document.getElementById('check-answer-btn');
+submitBtn.disabled = !isComplete;
+submitBtn.classList.toggle('opacity-50', !isComplete);
+},
+checkLetterAnswer() {
+if (this.isDebouncing) return;
+this.isDebouncing = true;
+this.clearTimer();
+const q = this.getCurrentQuestion();
+if (!q) return;
+const answerWord = q.toUpperCase();
+const inputs = [...document.querySelectorAll('#letter-boxes input')];
+let compiledStr = '';
+inputs.forEach(i => { compiledStr += (i.value || '').toUpperCase(); });
+const isCorrect = (compiledStr.replace(/\s/g, '') === answerWord.replace(/\s/g, ''));
+if (isCorrect) {
+this.currentScore += 10;
+this.correctCount++;
+soundManager.correct();
+this.showFeedback(true, answerWord, false);
+} else {
+soundManager.wrong();
+this.showFeedback(false, answerWord, false);
+}
+},
+showFeedback(isCorrect, rightAnswer, isTimeout = false) {
+const card = document.getElementById('feedback-card');
+const icon = document.getElementById('feedback-icon');
+const title = document.getElementById('feedback-title');
+const text = document.getElementById('feedback-answer');
+if (isCorrect) {
+card.className = "neo rounded-3xl bg-emerald-50 p-8 text-center border-4 border-emerald-400";
+icon.textContent = "🎉";
+title.textContent = "Wow, Correct!";
+title.className = "text-3xl font-black text-emerald-600 uppercase tracking-wide";
+text.textContent = "Great job! +10 Points.";
+} else if (isTimeout) {
+card.className = "neo rounded-3xl bg-amber-50 p-8 text-center border-4 border-amber-400";
+icon.textContent = "⏰";
+title.textContent = "Oops, Time's Up!";
+title.className = "text-3xl font-black text-amber-600 uppercase tracking-wide";
+text.textContent = The answer was: ${rightAnswer};
+} else {
+card.className = "neo rounded-3xl bg-rose-50 p-8 text-center border-4 border-rose-400";
+icon.textContent = "💪";
+title.textContent = "It's okay, try again!";
+title.className = "text-3xl font-black text-rose-500 uppercase tracking-wide";
+text.textContent = The answer was: ${rightAnswer};
+}
+router.go('feedback-screen');
+},
+nextQuestion() {
+this.currentQuestionIndex++;
+if (this.currentQuestionIndex >= 5) {
+this.finishTopicEvaluation();
+} else {
+router.go('view-quiz');
+this.loadQuestion();
+}
+},
+finishTopicEvaluation() {
+this.clearTimer();
+const accuracyPercentage = Math.round((this.correctCount / 5) * 100);
+let finalStars = 0;
+if (accuracyPercentage >= 90) finalStars = 3;
+else if (accuracyPercentage >= 70) finalStars = 2;
+else if (accuracyPercentage >= 50) finalStars = 1;
+this.lastResult = {
+score: this.currentScore,
+correct: this.correctCount,
+percentage: accuracyPercentage,
+stars: finalStars,
+topic: this.currentTopic
+};
+const currentRecord = this.topicsHistory[this.currentTopic] || { bestScore: 0, stars: 0, completed: false };
+if (this.currentScore >= currentRecord.bestScore) {
+currentRecord.bestScore = this.currentScore;
+currentRecord.stars = finalStars;
+currentRecord.completed = true;
+currentRecord.bestPercentage = accuracyPercentage;
+this.topicsHistory[this.currentTopic] = currentRecord;
+}
+this.saveData();
+document.getElementById('result-stars').textContent = '⭐'.repeat(finalStars) + '☆'.repeat(3 - finalStars);
+document.getElementById('result-score-val').textContent = this.currentScore;
+document.getElementById('result-correct-val').textContent = ${this.correctCount} / 5;
+document.getElementById('result-percentage-val').textContent = ${accuracyPercentage}%;
+let msg = "Keep learning! You can do it!";
+if (accuracyPercentage >= 90) msg = "Amazing! You are a certified English Champion! 👑";
+else if (accuracyPercentage >= 70) msg = "Well done! Exceptional accuracy speed! 🏅";
+else if (accuracyPercentage >= 50) msg = "Good effort! Practice more to capture 3 stars! ⭐";
+document.getElementById('result-message').textContent = msg;
+const certBtn = document.getElementById('btn-view-certificate');
+if (this.currentScore > 0) {
+certBtn.classList.remove('opacity-50', 'pointer-events-none');
+} else {
+certBtn.classList.add('opacity-50', 'pointer-events-none');
+}
+router.go('result-screen');
+},
+playAgain() {
+this.startTopic(this.currentTopic);
+},
+showCertificate() {
+const res = this.lastResult;
+document.querySelectorAll('#cert-display-name').forEach(el => {
+el.textContent = this.playerName || 'English Champion';
+});
+document.getElementById('certificate-topic').textContent = TOPIC_INFO[res.topic]?.name || res.topic;
+document.getElementById('certificate-stars').textContent = '⭐'.repeat(res.stars) + '☆'.repeat(3 - res.stars);
+document.getElementById('certificate-score').textContent = ${res.score} / 50 POINTS;
+document.getElementById('certificate-accuracy-val').textContent = ${res.percentage}%;
+const d = new Date();
+document.getElementById('cert-issue-date').textContent = DATE: ${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')};
+router.go('certificate-screen');
+},
+renderAchievementsView() {
+const container = document.getElementById('score-content');
+if (!container) return;
+let aggregatorStars = 0;
+let aggregatorPoints = 0;
+let finishedTopicsCounter = 0;
+Object.keys(QUESTION_BANK).forEach(k => {
+const rec = this.topicsHistory[k];
+if (rec && rec.completed) {
+aggregatorPoints += rec.bestScore;
+aggregatorStars += rec.stars;
+finishedTopicsCounter++;
+}
+});
+document.getElementById('achieve-total-stars').textContent = aggregatorStars;
+document.getElementById('achieve-total-points').textContent = aggregatorPoints;
+document.getElementById('achieve-total-topics').textContent = ${finishedTopicsCounter} / 11;
+container.innerHTML = '';
+Object.entries(TOPIC_INFO).forEach(([key, info]) => {
+const data = this.topicsHistory[key] || { bestScore: 0, stars: 0, completed: false, bestPercentage: 0 };
+const starRow = data.completed ? '⭐'.repeat(data.stars) || 'Passed' : 'Locked';
+const badgeClass = data.completed ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-400';
+const badgeText = data.completed ? 'Finished' : 'Unplayed';
+const row = document.createElement('div');
+row.className = "bg-white p-4 rounded-2xl border-2 border-slate-100 flex justify-between items-center shadow-sm hover:border-slate-200 transition-colors";
+row.innerHTML = <div class="flex items-center gap-3"> <div class="text-2xl p-1.5 rounded-xl ${info.color} border border-slate-800">${info.emoji}</div> <div> <h5 class="font-black text-slate-800 text-sm tracking-wide uppercase">${info.name}</h5> <p class="text-[11px] text-slate-400 font-bold">Record Highscore: <span class="text-slate-700 font-extrabold">${data.bestScore}/50</span> (${data.bestPercentage || 0}%)</p> </div> </div> <div class="flex items-center gap-4"> <div class="text-xs font-black text-amber-500 tracking-wide">${starRow}</div> <span class="text-[9px] font-black uppercase tracking-widest ${badgeClass} px-2.5 py-1 rounded-full">${badgeText}</span> </div>;
+container.appendChild(row);
+});
+},
+startTimer() {
+this.clearTimer();
+this.timeLeft = 60;
+this.updateTimerUI();
+this.timerInterval = setInterval(() => {
+this.timeLeft--;
+this.updateTimerUI();
+if (this.timeLeft <= 0) {
+this.timeLeft = 0;
+this.clearTimer();
+this.handleTimeout();
+}
+}, 1000);
+},
+updateTimerUI() {
+document.getElementById('timer-text').textContent = ${this.timeLeft}s;
+const fill = document.getElementById('timer-fill');
+if (fill) {
+fill.style.width = ${(this.timeLeft / 60) * 100}%;
+if (this.timeLeft <= 10) fill.style.backgroundColor = '#ef4444';
+else if (this.timeLeft <= 20) fill.style.backgroundColor = '#f59e0b';
+else fill.style.backgroundColor = '#4ade80';
+}
+},
+handleTimeout() {
+this.clearTimer();
+const q = this.getCurrentQuestion();
+if (!q) return;
+soundManager.wrong();
+this.showFeedback(false, q.toUpperCase(), true);
+},
+clearTimer() {
+if (this.timerInterval) {
+clearInterval(this.timerInterval);
+this.timerInterval = null;
+}
+}
+};
+window.addEventListener('DOMContentLoaded', () => {
+gameState.init();
+});
