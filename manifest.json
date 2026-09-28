@@ -1,0 +1,19 @@
+{
+  "short_name": "EnglishChamp",
+  "name": "Let's Be An English Champion! - TZ EDU KIDS",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFDE4D",
+  "theme_color": "#4A628A",
+  "orientation": "portrait",
+  "categories": ["education", "games"],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
