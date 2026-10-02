@@ -1,4 +1,4 @@
-const CACHE_NAME = 'word-completion-v4';
+const CACHE_NAME = 'word-completion-v5';
 
 const ASSETS = [
   './',
